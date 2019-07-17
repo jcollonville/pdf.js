@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>PDF.js test slave</title>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+
+    <script>
+    $(document).ready(function () {
+        console.log('test loaded');
+        $('iframe').attr('src', '../web/viewer.html?file=http://my.resosafe.test/afacture_notags.pdf#allowcors=true');    
+
+        $('iframe').ready(function() {
+            console.log('iframe loaded');
+            $(this).contents().on("mousedown, mouseup, click", function(){
+
+alert("Click detected inside iframe.");
+
+});
+
+            $(this).contents().on('webviewerinitialized', function(elem) {
+                console.log("initialized");
+              /*  elem.currentTarget.PDFViewerApplication.pdfSidebar.open();
+
+                elem.currentTarget.PDFViewerApplication.pdfSidebar.addPanel({
+                    id:'tagsPanel',
+                    title : 'tags',
+                    label : 'Tags Panel',
+                    icon: 'testicon',
+                    content: function() {
+                        return "<div>tags panel</div>"
+                    }
+                });*/
+
+            //    elem.currentTarget.PDFViewerApplication.open(url);
+            });  
+        });
+
+
+
+    });
+    
+    </script>
+  </head>
+  <body>
+    <iframe src=""  width="100%" height="100%"></iframe>
+</html>

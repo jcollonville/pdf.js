@@ -171,6 +171,10 @@ let PDFViewerApplication = {
     });
 
     this.initialized = true;
+console.log("webviewerinitialized");
+    const event = document.createEvent('CustomEvent');
+    event.initCustomEvent('webviewerinitialized', true, true, {});
+    document.dispatchEvent(event);
   },
 
   /**
@@ -206,6 +210,9 @@ let PDFViewerApplication = {
     let hash = document.location.hash.substring(1);
     let hashParams = parseQueryString(hash);
 
+    if ('allowcors' in hashParams) {
+      AppOptions.set('allowCORS', hashParams['allowcors'] === 'true');
+    }
     if ('disableworker' in hashParams &&
         hashParams['disableworker'] === 'true') {
       waitOn.push(loadFakeWorker());
@@ -1503,7 +1510,7 @@ if (typeof PDFJSDev === 'undefined' || PDFJSDev.test('GENERIC')) {
       // IE10 / IE11 does not include an origin in `blob:`-URLs. So don't block
       // any blob:-URL. The browser's same-origin policy will block requests to
       // blob:-URLs from other origins, so this is safe.
-      if (origin !== viewerOrigin && protocol !== 'blob:') {
+      if (origin !== viewerOrigin && protocol !== 'blob:' && !AppOptions.get('allowCORS')) {
         throw new Error('file origin does not match viewer\'s');
       }
     } catch (ex) {

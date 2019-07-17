@@ -28,6 +28,11 @@ const OptionKind = {
  *              values below *explicitly* rather than relying on imported types.
  */
 const defaultOptions = {
+  allowCORS: {
+    /** @type {boolean} */
+    value: false,
+    kind: OptionKind.API + OptionKind.PREFERENCE,
+  },
   cursorToolOnLoad: {
     /** @type {number} */
     value: 0,
@@ -208,7 +213,6 @@ const defaultOptions = {
     value: 1,
     kind: OptionKind.API,
   },
-
   workerPort: {
     /** @type {Object} */
     value: null,

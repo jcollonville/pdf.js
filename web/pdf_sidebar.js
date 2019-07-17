@@ -68,6 +68,7 @@ class PDFSidebar {
                 l10n = NullL10n, disableNotification = false, }) {
     this.isOpen = false;
     this.active = SidebarView.THUMBS;
+    this.default = SidebarView.THUMBS;
     this.isInitialViewSet = false;
 
     /**
@@ -82,6 +83,8 @@ class PDFSidebar {
     this.outerContainer = elements.outerContainer;
     this.viewerContainer = elements.viewerContainer;
     this.toggleButton = elements.toggleButton;
+    this.toolbar = elements.toolbar;
+    this.content = elements.content;
 
     this.thumbnailButton = elements.thumbnailButton;
     this.outlineButton = elements.outlineButton;
@@ -94,6 +97,9 @@ class PDFSidebar {
     this.eventBus = eventBus;
     this.l10n = l10n;
     this._disableNotification = disableNotification;
+    this.customPanels = [];
+    
+    console.log("sidebar construct");
 
     this._addEventListeners();
   }
@@ -102,7 +108,7 @@ class PDFSidebar {
     this.isInitialViewSet = false;
 
     this._hideUINotification(null);
-    this.switchView(SidebarView.THUMBS);
+    this.switchView(this.default);
 
     this.outlineButton.disabled = false;
     this.attachmentsButton.disabled = false;
@@ -148,6 +154,25 @@ class PDFSidebar {
     if (!this._switchView(view, /* forceOpen */ true)) {
       this._dispatchEvent();
     }
+  }
+
+  addPanel(parameters) {
+    /* <button id="viewThumbnail" class="toolbarButton toggled" title="Show Thumbnails" tabindex="2" data-l10n-id="thumbs">
+               <span data-l10n-id="thumbs_label">Thumbnails</span>
+            </button>*/
+
+    let button = document.createElement('button');
+    button.className = 'toolbarButton';
+    button.setAttribute('title', parameters.title);
+    button.setAttribute('tabindex', this.toolbar.childElementCount + 2);
+
+    let label = document.createElement('span');
+    label.textContent = parameters.label;
+    button.appendChild(label);
+
+    this.toolbar.appendChild(button);
+
+
   }
 
   /**

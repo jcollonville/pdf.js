@@ -53,11 +53,7 @@ See https://github.com/adobe-type-tools/cmap-resources
 <!--#include viewer-snippet.html-->
 <!--#endif-->
 
-<!--#if !MINIFIED -->
-    <script src="viewer.js"></script>
-<!--#else-->
-<!--#include viewer-snippet-minified.html-->
-<!--#endif-->
+
 
   </head>
 
@@ -414,5 +410,10 @@ See https://github.com/adobe-type-tools/cmap-resources
 
     </div> <!-- outerContainer -->
     <div id="printContainer"></div>
+    <!--#if !MINIFIED -->
+    <script src="viewer.js"></script>
+<!--#else-->
+<!--#include viewer-snippet-minified.html-->
+<!--#endif-->
   </body>
 </html>
