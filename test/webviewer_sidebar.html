@@ -17,12 +17,35 @@
             console.log('iframe loaded');
             
 
+            $('iframe').contents().on('textselected', function(e) {
+                console.log(e.detail);
+            });
+
+
             $('iframe').contents().on('webviewerinitialized', function() {
                 console.log("initialized");
                 var elem=$('iframe')[0].contentWindow;
 
+                elem.PDFViewerApplication.pdfSidebarResizer.resize(400);
                 elem.PDFViewerApplication.pdfSidebar.open();
 
+                elem.PDFViewerApplication.toolbar.toggleButton('print', false);
+                elem.PDFViewerApplication.toolbar.addButton({
+                    title : 'Test',
+                    icon: 'images/secondaryToolbarButton-spreadOdd.png',
+                    insertBefore: 'print',
+                    onclick: function() {
+                        alert('toolbar button clicked');
+                    }
+                });
+                elem.PDFViewerApplication.toolbar.addButton({
+                    title : 'Close',
+                    icon: 'images/toolbarButton-zoomOut.png',
+                    insertAfter: 'secondaryToolbarToggle',
+                    onclick: function() {
+                        $('iframe').remove();
+                    }
+                });
                 elem.PDFViewerApplication.pdfSidebar.addPanel({
                     id:'tagsPanel',
                     idx: 10,
@@ -30,7 +53,12 @@
                     label : 'Tags Panel',
                     icon: 'images/toolbarButton-bookmark.png',
                     content: function() {
-                        return "<div>tags panel</div>"
+
+                        var div=$('<div>');
+                        $('<button>').appendTo(div).on('click', function() { alert('clicked'); });
+
+
+                        return div[0];
                     }
                 });
 

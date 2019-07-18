@@ -1395,6 +1395,7 @@ let PDFViewerApplication = {
   bindWindowEvents() {
     let { eventBus, _boundEvents, } = this;
 
+    
     _boundEvents.windowResize = () => {
       eventBus.dispatch('resize', { source: window, });
     };
@@ -1411,6 +1412,8 @@ let PDFViewerApplication = {
       eventBus.dispatch('afterprint', { source: window, });
     };
 
+
+    window.document.addEventListener('selectionchange', webViewerSelection);
     window.addEventListener('visibilitychange', webViewerVisibilityChange);
     window.addEventListener('wheel', webViewerWheel, { passive: false, });
     window.addEventListener('click', webViewerClick);
@@ -1481,6 +1484,7 @@ let PDFViewerApplication = {
     window.removeEventListener('hashchange', _boundEvents.windowHashChange);
     window.removeEventListener('beforeprint', _boundEvents.windowBeforePrint);
     window.removeEventListener('afterprint', _boundEvents.windowAfterPrint);
+    window.document.removeEventListener('selectionchange', webViewerSelection);
 
     _boundEvents.windowResize = null;
     _boundEvents.windowHashChange = null;
@@ -2100,6 +2104,34 @@ function setZoomDisabledTimeout() {
   zoomDisabledTimeout = setTimeout(function() {
     zoomDisabledTimeout = null;
   }, WHEEL_ZOOM_DISABLED_TIMEOUT);
+}
+
+function webViewerSelection(evt) {
+    let selection = getSelection();
+    if (!selection.isCollapsed && selection.focusNode.nodeName === '#text') {
+      let pdfViewer = PDFViewerApplication.pdfViewer;
+
+      let pageIndex = pdfViewer.currentPageNumber - 1;
+      let page = pdfViewer._pages[pageIndex];
+      let pageRect = page.canvas.getClientRects()[0];
+      let selectionRects = getSelection().getRangeAt(0).getClientRects();
+      let viewport = page.viewport;
+      let selected = [];
+      for (let i = 0, iLen = selectionRects.length; i < iLen; i++) {
+        const rect = selectionRects[i];
+        selected.push(
+            viewport.convertToPdfPoint(rect.left - pageRect.left,
+              rect.top - pageRect.top)
+            .concat(
+            viewport.convertToPdfPoint(rect.right - pageRect.left,
+              rect.bottom - pageRect.top)));
+      }
+
+      let event = new CustomEvent('textselected',
+              { 'detail': { page: pageIndex, coords: selected, }, });
+
+     document.dispatchEvent(event);
+    }
 }
 
 function webViewerWheel(evt) {

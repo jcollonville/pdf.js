@@ -72,6 +72,10 @@ class PDFSidebarResizer {
     return this._outerContainerWidth;
   }
 
+  resize(width) {
+    this._updateWidth(width);
+  }
+
   /**
    * @private
    * returns {boolean} Indicating if the sidebar width was updated.

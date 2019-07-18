@@ -93,6 +93,38 @@ class Toolbar {
     this._updateUIState(true);
   }
 
+  addButton(parameters) {
+    let button = document.createElement('button');
+    button.className = 'toolbarButton';
+    button.setAttribute('title', parameters.title);
+
+    let img = new Image();
+    img.src = parameters.icon;
+    button.appendChild(img);
+
+    let label = document.createElement('span');
+    label.textContent = parameters.label;
+    button.appendChild(label);
+
+    if (parameters.insertBefore !== undefined) {
+      let elem = this.toolbar.querySelector('#' + parameters.insertBefore);
+      elem.parentNode.insertBefore(button, elem);
+    } else if (parameters.insertAfter !== undefined) {
+      let elem = this.toolbar.querySelector('#' + parameters.insertAfter);
+      elem.parentNode.insertBefore(button, elem.nextSibling);
+    } else {
+      return;
+    }
+
+    button.addEventListener('click', function() {
+      parameters.onclick();
+    });
+  }
+
+  toggleButton(id, show = true) {
+    this.toolbar.querySelector('#' + id).classList.toggle('hidden', !show);
+  }
+
   _bindListeners() {
     let { eventBus, items, } = this;
     let self = this;

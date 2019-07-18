@@ -82,7 +82,6 @@ class PDFSidebar {
 
     this.outerContainer = elements.outerContainer;
     this.viewerContainer = elements.viewerContainer;
-    this.sidebarContainer = elements.sidebarContainer;
     this.toggleButton = elements.toggleButton;
     this.toolbar = elements.toolbar;
     this.content = elements.content;
@@ -139,10 +138,6 @@ class PDFSidebar {
     return (this.isOpen && this.active === SidebarView.ATTACHMENTS);
   }
 
-  setWidth(width) {
-
-  }
-  
   /**
    * @param {number} view - The sidebar view that should become visible,
    *                        must be one of the values in {SidebarView}.
@@ -187,8 +182,15 @@ class PDFSidebar {
     });
 
     let view = document.createElement('div');
+    view.className = 'hidden';
     view.id = parameters.id;
     this.content.appendChild(view);
+
+    if (typeof parameters.content === 'function') {
+      view.appendChild(parameters.content());
+    } else {
+      view.appendChild(parameters.content);
+    }
 
     this.panels[parameters.idx] = { button, view, };
 
