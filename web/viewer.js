@@ -114,8 +114,9 @@ function getViewerConfiguration() {
       // Divs (and sidebar button)
       outerContainer: document.getElementById('outerContainer'),
       viewerContainer: document.getElementById('viewerContainer'),
+      sidebarContainer: document.getElementById('sidebarContainer'),
       toggleButton: document.getElementById('sidebarToggle'),
-      toolbar: document.getElementById('toolbarSidebar').firstChild,
+      toolbar: document.querySelector('#toolbarSidebar div.splitToolbarButton'),
       content: document.getElementById('sidebarContent'),
       // Buttons
       thumbnailButton: document.getElementById('viewThumbnail'),

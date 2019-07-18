@@ -7,31 +7,34 @@
     <script>
     $(document).ready(function () {
         console.log('test loaded');
-        $('iframe').attr('src', '../web/viewer.html?file=http://my.resosafe.test/afacture_notags.pdf#allowcors=true');    
+        //$('iframe').attr('src', '../web/viewer.html?file=http://my.resosafe.test/afacture_notags.pdf#allowcors=true');    
+        
 
-        $('iframe').ready(function() {
+        $('iframe').on('load', function () {
+
+            //$(this).contents()[0].addEventListener('webviewerinitialized', function() { console.log("CATCH2 INIT");}, true);
+
             console.log('iframe loaded');
-            $(this).contents().on("mousedown, mouseup, click", function(){
+            
 
-alert("Click detected inside iframe.");
-
-});
-
-            $(this).contents().on('webviewerinitialized', function(elem) {
+            $('iframe').contents().on('webviewerinitialized', function() {
                 console.log("initialized");
-              /*  elem.currentTarget.PDFViewerApplication.pdfSidebar.open();
+                var elem=$('iframe')[0].contentWindow;
 
-                elem.currentTarget.PDFViewerApplication.pdfSidebar.addPanel({
+                elem.PDFViewerApplication.pdfSidebar.open();
+
+                elem.PDFViewerApplication.pdfSidebar.addPanel({
                     id:'tagsPanel',
+                    idx: 10,
                     title : 'tags',
                     label : 'Tags Panel',
-                    icon: 'testicon',
+                    icon: 'images/toolbarButton-bookmark.png',
                     content: function() {
                         return "<div>tags panel</div>"
                     }
-                });*/
+                });
 
-            //    elem.currentTarget.PDFViewerApplication.open(url);
+            //    elem.PDFViewerApplication.open(url);
             });  
         });
 
@@ -42,5 +45,5 @@ alert("Click detected inside iframe.");
     </script>
   </head>
   <body>
-    <iframe src=""  width="100%" height="100%"></iframe>
+    <iframe src="../web/viewer.html?file=http://my.resosafe.test/afacture_notags.pdf#allowcors=true" width="100%" height="100%"></iframe>
 </html>

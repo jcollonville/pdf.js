@@ -171,7 +171,7 @@ let PDFViewerApplication = {
     });
 
     this.initialized = true;
-console.log("webviewerinitialized");
+    
     const event = document.createEvent('CustomEvent');
     event.initCustomEvent('webviewerinitialized', true, true, {});
     document.dispatchEvent(event);

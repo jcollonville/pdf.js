@@ -24,7 +24,7 @@ const SidebarView = {
   THUMBS: 1, // Default value.
   OUTLINE: 2,
   ATTACHMENTS: 3,
-  LAYERS: 4,
+  LAYERS: 4
 };
 
 /**
@@ -82,6 +82,7 @@ class PDFSidebar {
 
     this.outerContainer = elements.outerContainer;
     this.viewerContainer = elements.viewerContainer;
+    this.sidebarContainer = elements.sidebarContainer;
     this.toggleButton = elements.toggleButton;
     this.toolbar = elements.toolbar;
     this.content = elements.content;
@@ -97,9 +98,14 @@ class PDFSidebar {
     this.eventBus = eventBus;
     this.l10n = l10n;
     this._disableNotification = disableNotification;
-    this.customPanels = [];
-    
-    console.log("sidebar construct");
+
+    this.panels = {};
+    this.panels[SidebarView.THUMBS] = { button: this.thumbnailButton, 
+      view: this.thumbnailView, };
+    this.panels[SidebarView.OUTLINE] = { button: this.outlineButton, 
+      view: this.outlineView, };
+    this.panels[SidebarView.ATTACHMENTS] = { button: this.attachmentButton, 
+      view: this.attachmentView, };
 
     this._addEventListeners();
   }
@@ -133,6 +139,10 @@ class PDFSidebar {
     return (this.isOpen && this.active === SidebarView.ATTACHMENTS);
   }
 
+  setWidth(width) {
+
+  }
+  
   /**
    * @param {number} view - The sidebar view that should become visible,
    *                        must be one of the values in {SidebarView}.
@@ -157,21 +167,30 @@ class PDFSidebar {
   }
 
   addPanel(parameters) {
-    /* <button id="viewThumbnail" class="toolbarButton toggled" title="Show Thumbnails" tabindex="2" data-l10n-id="thumbs">
-               <span data-l10n-id="thumbs_label">Thumbnails</span>
-            </button>*/
 
     let button = document.createElement('button');
     button.className = 'toolbarButton';
     button.setAttribute('title', parameters.title);
     button.setAttribute('tabindex', this.toolbar.childElementCount + 2);
 
+    let img = new Image();
+    img.src = parameters.icon;
+    button.appendChild(img);
+
     let label = document.createElement('span');
     label.textContent = parameters.label;
     button.appendChild(label);
 
     this.toolbar.appendChild(button);
+    button.addEventListener('click', () => {
+      this.switchView(parameters.idx);
+    });
 
+    let view = document.createElement('div');
+    view.id = parameters.id;
+    this.content.appendChild(view);
+
+    this.panels[parameters.idx] = { button, view, };
 
   }
 
@@ -193,6 +212,16 @@ class PDFSidebar {
     const isViewChanged = (view !== this.active);
     let shouldForceRendering = false;
 
+    const target = this.panels[view];
+    if (target === undefined) {
+      console.error(`PDFSidebar._switchView: "${view}" is not a valid view.`);
+      return false;
+    }
+
+    if (target.button.disabled) {
+      return false;
+    }
+
     switch (view) {
       case SidebarView.NONE:
         if (this.isOpen) {
@@ -205,37 +234,39 @@ class PDFSidebar {
           shouldForceRendering = true;
         }
         break;
-      case SidebarView.OUTLINE:
-        if (this.outlineButton.disabled) {
-          return false;
-        }
-        break;
-      case SidebarView.ATTACHMENTS:
-        if (this.attachmentsButton.disabled) {
-          return false;
-        }
-        break;
-      default:
-        console.error(`PDFSidebar._switchView: "${view}" is not a valid view.`);
-        return false;
     }
     // Update the active view *after* it has been validated above,
     // in order to prevent setting it to an invalid state.
     this.active = view;
 
     // Update the CSS classes, for all buttons...
+    for (let key in this.panels) {
+      if (this.panels.hasOwnProperty(key)) {
+        let panel = this.panels[key];
+
+        if (panel.button !== undefined) {
+          panel.button.classList.toggle('toggled', view === Number(key));
+        }
+        if (panel.view !== undefined) {
+         panel.view.classList.toggle('hidden', view !== Number(key));
+        }
+      }
+    }
+    /*
     this.thumbnailButton.classList.toggle('toggled',
       view === SidebarView.THUMBS);
     this.outlineButton.classList.toggle('toggled',
       view === SidebarView.OUTLINE);
     this.attachmentsButton.classList.toggle('toggled',
       view === SidebarView.ATTACHMENTS);
+      */
     // ... and for all views.
+    /*
     this.thumbnailView.classList.toggle('hidden', view !== SidebarView.THUMBS);
     this.outlineView.classList.toggle('hidden', view !== SidebarView.OUTLINE);
     this.attachmentsView.classList.toggle('hidden',
       view !== SidebarView.ATTACHMENTS);
-
+*/
     if (forceOpen && !this.isOpen) {
       this.open();
       return true; // Opening will trigger rendering and dispatch the event.
@@ -416,6 +447,18 @@ class PDFSidebar {
     });
 
     // Buttons for switching views.
+    for (let key in this.panels) {
+      if (this.panels.hasOwnProperty(key)) {
+        let panel = this.panels[key];
+        if (panel.button !== undefined) {
+          panel.button.addEventListener('click', () => {
+            this.switchView(Number(key));
+          });
+        }
+      }
+    }
+    
+    /*
     this.thumbnailButton.addEventListener('click', () => {
       this.switchView(SidebarView.THUMBS);
     });
@@ -430,6 +473,7 @@ class PDFSidebar {
     this.attachmentsButton.addEventListener('click', () => {
       this.switchView(SidebarView.ATTACHMENTS);
     });
+    */
 
     // Disable/enable views.
     this.eventBus.on('outlineloaded', (evt) => {
