@@ -391,7 +391,7 @@ class PDFSidebar {
 
     let removeNotification = (view) => {
       let panel = this.panels[view];
-      if (panel.button !== undefined) {
+      if (panel !== undefined && panel.button !== undefined) {
         panel.button.classList.remove(UI_NOTIFICATION_CLASS);
       }
     };
