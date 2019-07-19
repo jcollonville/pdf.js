@@ -33,6 +33,11 @@ const defaultOptions = {
     value: false,
     kind: OptionKind.API + OptionKind.PREFERENCE,
   },
+  withCredentials: {
+    /** @type {boolean} */
+    value: false,
+    kind: OptionKind.API + OptionKind.PREFERENCE,
+  },
   cursorToolOnLoad: {
     /** @type {number} */
     value: 0,

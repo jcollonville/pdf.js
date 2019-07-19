@@ -213,6 +213,10 @@ let PDFViewerApplication = {
     if ('allowcors' in hashParams) {
       AppOptions.set('allowCORS', hashParams['allowcors'] === 'true');
     }
+    if ('withcredentials' in hashParams) {
+      AppOptions.set('withCredentials',
+                    hashParams['withcredentials'] === 'true');
+    }
     if ('disableworker' in hashParams &&
         hashParams['disableworker'] === 'true') {
       waitOn.push(loadFakeWorker());
@@ -1689,6 +1693,7 @@ if (typeof PDFJSDev === 'undefined' || PDFJSDev.test('GENERIC')) {
         PDFViewerApplication.open(new Uint8Array(xhr.response));
       };
       xhr.open('GET', file);
+      xhr.withCredentials = AppOptions.get('withCredentials');
       xhr.responseType = 'arraybuffer';
       xhr.send();
       return;
