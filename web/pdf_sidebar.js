@@ -165,6 +165,7 @@ class PDFSidebar {
 
     let button = document.createElement('button');
     button.className = 'toolbarButton';
+    button.id = parameters.id;
     button.setAttribute('title', parameters.title);
     button.setAttribute('tabindex', this.toolbar.childElementCount + 2);
 
@@ -254,21 +255,7 @@ class PDFSidebar {
         }
       }
     }
-    /*
-    this.thumbnailButton.classList.toggle('toggled',
-      view === SidebarView.THUMBS);
-    this.outlineButton.classList.toggle('toggled',
-      view === SidebarView.OUTLINE);
-    this.attachmentsButton.classList.toggle('toggled',
-      view === SidebarView.ATTACHMENTS);
-      */
-    // ... and for all views.
-    /*
-    this.thumbnailView.classList.toggle('hidden', view !== SidebarView.THUMBS);
-    this.outlineView.classList.toggle('hidden', view !== SidebarView.OUTLINE);
-    this.attachmentsView.classList.toggle('hidden',
-      view !== SidebarView.ATTACHMENTS);
-*/
+
     if (forceOpen && !this.isOpen) {
       this.open();
       return true; // Opening will trigger rendering and dispatch the event.
@@ -388,13 +375,9 @@ class PDFSidebar {
       return;
     }
 
-    switch (view) {
-      case SidebarView.OUTLINE:
-        this.outlineButton.classList.add(UI_NOTIFICATION_CLASS);
-        break;
-      case SidebarView.ATTACHMENTS:
-        this.attachmentsButton.classList.add(UI_NOTIFICATION_CLASS);
-        break;
+    let panel = this.panels[view];
+    if (panel.button !== undefined) {
+      panel.button.classList.add(UI_NOTIFICATION_CLASS);
     }
   }
 
@@ -407,13 +390,9 @@ class PDFSidebar {
     }
 
     let removeNotification = (view) => {
-      switch (view) {
-        case SidebarView.OUTLINE:
-          this.outlineButton.classList.remove(UI_NOTIFICATION_CLASS);
-          break;
-        case SidebarView.ATTACHMENTS:
-          this.attachmentsButton.classList.remove(UI_NOTIFICATION_CLASS);
-          break;
+      let panel = this.panels[view];
+      if (panel.button !== undefined) {
+        panel.button.classList.remove(UI_NOTIFICATION_CLASS);
       }
     };
 
@@ -459,24 +438,7 @@ class PDFSidebar {
         }
       }
     }
-    
-    /*
-    this.thumbnailButton.addEventListener('click', () => {
-      this.switchView(SidebarView.THUMBS);
-    });
-
-    this.outlineButton.addEventListener('click', () => {
-      this.switchView(SidebarView.OUTLINE);
-    });
-    this.outlineButton.addEventListener('dblclick', () => {
-      this.eventBus.dispatch('toggleoutlinetree', { source: this, });
-    });
-
-    this.attachmentsButton.addEventListener('click', () => {
-      this.switchView(SidebarView.ATTACHMENTS);
-    });
-    */
-
+  
     // Disable/enable views.
     this.eventBus.on('outlineloaded', (evt) => {
       let outlineCount = evt.outlineCount;

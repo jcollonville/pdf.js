@@ -2130,7 +2130,7 @@ function webViewerSelection(evt) {
       let event = new CustomEvent('textselected',
               { 'detail': { page: pageIndex, coords: selected, }, });
 
-     document.dispatchEvent(event);
+      document.dispatchEvent(event);
     }
 }
 
