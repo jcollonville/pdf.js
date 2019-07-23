@@ -171,7 +171,7 @@ let PDFViewerApplication = {
     });
 
     this.initialized = true;
-    
+
     const event = document.createEvent('CustomEvent');
     event.initCustomEvent('webviewerinitialized', true, true, {});
     document.dispatchEvent(event);
@@ -1399,7 +1399,6 @@ let PDFViewerApplication = {
   bindWindowEvents() {
     let { eventBus, _boundEvents, } = this;
 
-    
     _boundEvents.windowResize = () => {
       eventBus.dispatch('resize', { source: window, });
     };
@@ -1415,7 +1414,6 @@ let PDFViewerApplication = {
     _boundEvents.windowAfterPrint = () => {
       eventBus.dispatch('afterprint', { source: window, });
     };
-
 
     window.document.addEventListener('selectionchange', webViewerSelection);
     window.addEventListener('visibilitychange', webViewerVisibilityChange);
@@ -1518,7 +1516,8 @@ if (typeof PDFJSDev === 'undefined' || PDFJSDev.test('GENERIC')) {
       // IE10 / IE11 does not include an origin in `blob:`-URLs. So don't block
       // any blob:-URL. The browser's same-origin policy will block requests to
       // blob:-URLs from other origins, so this is safe.
-      if (origin !== viewerOrigin && protocol !== 'blob:' && !AppOptions.get('allowCORS')) {
+      if (origin !== viewerOrigin && protocol !== 'blob:' &&
+              !AppOptions.get('allowCORS')) {
         throw new Error('file origin does not match viewer\'s');
       }
     } catch (ex) {
@@ -2114,6 +2113,7 @@ function setZoomDisabledTimeout() {
 function webViewerSelection(evt) {
     let selection = getSelection();
     if (!selection.isCollapsed && selection.focusNode.nodeName === '#text') {
+
       let pdfViewer = PDFViewerApplication.pdfViewer;
 
       let pageIndex = pdfViewer.currentPageNumber - 1;
@@ -2135,6 +2135,9 @@ function webViewerSelection(evt) {
       let event = new CustomEvent('textselected',
               { 'detail': { page: pageIndex, coords: selected, }, });
 
+      document.dispatchEvent(event);
+    } else {
+      let event = new CustomEvent('textunselected');
       document.dispatchEvent(event);
     }
 }
