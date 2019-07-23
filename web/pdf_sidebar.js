@@ -165,7 +165,7 @@ class PDFSidebar {
 
     let button = document.createElement('button');
     button.className = 'toolbarButton';
-    button.id = parameters.id;
+    button.id = 'view' + parameters.id;
     button.setAttribute('title', parameters.title);
     button.setAttribute('tabindex', this.toolbar.childElementCount + 2);
 

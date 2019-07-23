@@ -1576,7 +1576,10 @@ function webViewerInitialized() {
   if (typeof PDFJSDev === 'undefined' || PDFJSDev.test('GENERIC')) {
     let queryString = document.location.search.substring(1);
     let params = parseQueryString(queryString);
-    file = 'file' in params ? params.file : AppOptions.get('defaultUrl');
+    if (!('file' in params)) {
+      return;
+    }
+    file = params.file;
     validateFileURL(file);
   } else if (PDFJSDev.test('FIREFOX || MOZCENTRAL')) {
     file = window.location.href.split('#')[0];
@@ -2132,12 +2135,15 @@ function webViewerSelection(evt) {
               rect.bottom - pageRect.top)));
       }
 
-      let event = new CustomEvent('textselected',
-              { 'detail': { page: pageIndex, coords: selected, }, });
+      PDFViewerApplication.selectedText = { text: selection.toString(), page: pageIndex, coords: selected, };
+
+      let event = new CustomEvent('textselectionchange',
+              { 'detail': PDFViewerApplication.selectedText, });
 
       document.dispatchEvent(event);
     } else {
-      let event = new CustomEvent('textunselected');
+      PDFViewerApplication.selectedText = undefined;
+      let event = new CustomEvent('textselectionchange');
       document.dispatchEvent(event);
     }
 }
