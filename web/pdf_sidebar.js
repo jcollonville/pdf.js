@@ -169,10 +169,6 @@ class PDFSidebar {
     button.setAttribute('title', parameters.title);
     button.setAttribute('tabindex', this.toolbar.childElementCount + 2);
 
-    let img = new Image();
-    img.src = parameters.icon;
-    button.appendChild(img);
-
     let label = document.createElement('span');
     label.textContent = parameters.label;
     button.appendChild(label);
