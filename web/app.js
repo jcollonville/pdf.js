@@ -1576,9 +1576,6 @@ function webViewerInitialized() {
   if (typeof PDFJSDev === 'undefined' || PDFJSDev.test('GENERIC')) {
     let queryString = document.location.search.substring(1);
     let params = parseQueryString(queryString);
-    if (!('file' in params)) {
-      return;
-    }
     file = params.file;
     validateFileURL(file);
   } else if (PDFJSDev.test('FIREFOX || MOZCENTRAL')) {

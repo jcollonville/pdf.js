@@ -97,10 +97,7 @@ class Toolbar {
     let button = document.createElement('button');
     button.className = 'toolbarButton';
     button.setAttribute('title', parameters.title);
-
-    let img = new Image();
-    img.src = parameters.icon;
-    button.appendChild(img);
+    button.id = parameters.id;
 
     let label = document.createElement('span');
     label.textContent = parameters.label;
