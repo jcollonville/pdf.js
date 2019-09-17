@@ -423,6 +423,10 @@ class PDFSidebar {
       }
     });
 
+    this.toggleButton.addEventListener('click', () => {
+      this.toggle();
+    });
+
     // Buttons for switching views.
     for (let key in this.panels) {
       if (this.panels.hasOwnProperty(key)) {
