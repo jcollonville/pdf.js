@@ -96,13 +96,21 @@ class Toolbar {
 
   addButton(parameters) {
     let button = document.createElement('button');
-    button.className = 'toolbarButton';
+    let className = 'toolbarButton';
     button.setAttribute('title', parameters.title);
     button.id = parameters.id;
 
     let label = document.createElement('span');
     label.textContent = parameters.label;
     button.appendChild(label);
+    if (parameters.displayLabel === true) {
+      className += ' showLabel';
+    }
+
+    if (parameters.extraClass !== undefined) {
+      className += ' ' + parameters.extraClass;
+    }
+    button.className = className;
 
     if (parameters.insertBefore !== undefined) {
       let elem = this.toolbar.querySelector('#' + parameters.insertBefore);
@@ -115,7 +123,7 @@ class Toolbar {
     }
 
     button.addEventListener('click', function() {
-      parameters.onclick();
+      parameters.onclick(this);
     });
   }
 
