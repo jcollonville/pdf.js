@@ -164,7 +164,12 @@ class PDFSidebar {
   addPanel(parameters) {
 
     let button = document.createElement('button');
-    button.className = 'toolbarButton';
+
+    let className = 'toolbarButton';
+    if (parameters.extraClass !== undefined) {
+      className += ' ' + parameters.extraClass;
+    }
+    button.className = className;
     button.id = 'view' + parameters.id;
     button.setAttribute('title', parameters.title);
     button.setAttribute('tabindex', this.toolbar.childElementCount + 2);
@@ -179,7 +184,11 @@ class PDFSidebar {
     });
 
     let view = document.createElement('div');
-    view.className = 'hidden';
+    className = 'hidden';
+    if (parameters.extraClass !== undefined) {
+      className += ' ' + parameters.extraClass;
+    }
+    view.className = className;
     view.id = parameters.id;
     this.content.appendChild(view);
 
