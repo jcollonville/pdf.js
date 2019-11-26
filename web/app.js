@@ -565,6 +565,7 @@ let PDFViewerApplication = {
 
   setTitle(title) {
     if (this.isViewerEmbedded) {
+      document.getElementById('documentTitle').textContent = title;
       // Embedded PDF viewers should not be changing their parent page's title.
       return;
     }
