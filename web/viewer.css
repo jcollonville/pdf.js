@@ -588,13 +588,13 @@ html[dir='ltr'] .doorHangerRight:before {
   height: auto;
 }
 
-html[dir='ltr'] #outerContainer.sidebarOpen #toolbarViewerFloating {
+html[dir='ltr'] #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) #toolbarViewerFloating {
   -webkit-transition-property: left;
   transition-property: left;
   left: 200px;
   left: calc(50% + var(--sidebar-width) /2);
 }
-html[dir='rtl'] #outerContainer.sidebarOpen #toolbarViewerFloating {
+html[dir='rtl'] #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) #toolbarViewerFloating {
   -webkit-transition-property: right;
   transition-property: right;
   right: 200px;
