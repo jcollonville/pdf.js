@@ -29,7 +29,7 @@ import {
   getDocument, PDFDataRangeTransport, PDFDocumentProxy, PDFPageProxy, PDFWorker
 } from '../../src/display/api';
 import { GlobalWorkerOptions } from '../../src/display/worker_options';
-import isNodeJS from '../../src/shared/is_node';
+import { isNodeJS } from '../../src/shared/is_node';
 import { Metadata } from '../../src/display/metadata';
 
 describe('api', function() {
@@ -40,7 +40,7 @@ describe('api', function() {
   let CanvasFactory;
 
   beforeAll(function(done) {
-    if (isNodeJS()) {
+    if (isNodeJS) {
       CanvasFactory = new NodeCanvasFactory();
     } else {
       CanvasFactory = new DOMCanvasFactory();
@@ -111,7 +111,7 @@ describe('api', function() {
     });
     it('creates pdf doc from typed array', function(done) {
       let typedArrayPdfPromise;
-      if (isNodeJS()) {
+      if (isNodeJS) {
         typedArrayPdfPromise = NodeFileReaderFactory.fetch({
           path: TEST_PDFS_PATH.node + basicApiFileName,
         });
@@ -148,8 +148,10 @@ describe('api', function() {
       var loadingTask = getDocument(buildGetDocumentParams('bug1020226.pdf'));
       loadingTask.promise.then(function () {
         done.fail('shall fail loading');
-      }).catch(function (error) {
-        expect(error instanceof InvalidPDFException).toEqual(true);
+      }).catch(function(reason) {
+        expect(reason instanceof InvalidPDFException).toEqual(true);
+        expect(reason.message).toEqual('Invalid PDF structure.');
+
         loadingTask.destroy().then(done);
       });
     });
@@ -292,11 +294,25 @@ describe('api', function() {
         done();
       }).catch(done.fail);
     });
+
+    it('creates pdf doc from empty typed array', function(done) {
+      const loadingTask = getDocument(new Uint8Array(0));
+
+      loadingTask.promise.then(function() {
+        done.fail('shall not open empty file');
+      }, function(reason) {
+        expect(reason instanceof InvalidPDFException);
+        expect(reason.message).toEqual(
+          'The PDF file is empty, i.e. its size is zero bytes.');
+
+        loadingTask.destroy().then(done);
+      });
+    });
   });
 
   describe('PDFWorker', function() {
     it('worker created or destroyed', function (done) {
-      if (isNodeJS()) {
+      if (isNodeJS) {
         pending('Worker is not supported in Node.js.');
       }
 
@@ -315,7 +331,7 @@ describe('api', function() {
       }).catch(done.fail);
     });
     it('worker created or destroyed by getDocument', function (done) {
-      if (isNodeJS()) {
+      if (isNodeJS) {
         pending('Worker is not supported in Node.js.');
       }
 
@@ -337,7 +353,7 @@ describe('api', function() {
       }).catch(done.fail);
     });
     it('worker created and can be used in getDocument', function (done) {
-      if (isNodeJS()) {
+      if (isNodeJS) {
         pending('Worker is not supported in Node.js.');
       }
 
@@ -364,7 +380,7 @@ describe('api', function() {
       }).catch(done.fail);
     });
     it('creates more than one worker', function (done) {
-      if (isNodeJS()) {
+      if (isNodeJS) {
         pending('Worker is not supported in Node.js.');
       }
 
@@ -384,7 +400,7 @@ describe('api', function() {
       }).catch(done.fail);
     });
     it('gets current workerSrc', function() {
-      if (isNodeJS()) {
+      if (isNodeJS) {
         pending('Worker is not supported in Node.js.');
       }
 
@@ -955,7 +971,7 @@ describe('api', function() {
     describe('Cross-origin', function() {
       var loadingTask;
       function _checkCanLoad(expectSuccess, filename, options) {
-        if (isNodeJS()) {
+        if (isNodeJS) {
           pending('Cannot simulate cross-origin requests in Node.js');
         }
         var params = buildGetDocumentParams(filename, options);
@@ -1100,9 +1116,13 @@ describe('api', function() {
       expect(viewport.width).toEqual(1262.835);
       expect(viewport.height).toEqual(892.92);
     });
+    it('gets viewport with "offsetX/offsetY" arguments', function () {
+      const viewport = page.getViewport({ scale: 1, rotation: 0,
+                                          offsetX: 100, offsetY: -100, });
+      expect(viewport.transform).toEqual([1, 0, 0, -1, 100, 741.89]);
+    });
     it('gets viewport respecting "dontFlip" argument', function () {
-      const scale = 1;
-      const rotation = 135;
+      const scale = 1, rotation = 0;
       let viewport = page.getViewport({ scale, rotation, });
       let dontFlipViewport = page.getViewport({ scale, rotation,
                                                 dontFlip: true, });
@@ -1547,7 +1567,7 @@ describe('api', function() {
 
     beforeAll(function(done) {
       const fileName = 'tracemonkey.pdf';
-      if (isNodeJS()) {
+      if (isNodeJS) {
         dataPromise = NodeFileReaderFactory.fetch({
           path: TEST_PDFS_PATH.node + fileName,
         });
